@@ -1,87 +1,392 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Valentine Proposal 💖</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Will you be my Valentine?</title>
+  <meta name="description" content="A special Valentine proposal — made with ❤️" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #ffe6eb;
-      font-family: Arial, sans-serif;
+    :root{
+      --bg1: #ff9a9e;
+      --bg2: #fad0c4;
+      --card-bg: rgba(255,255,255,0.12);
+      --glass-border: rgba(255,255,255,0.18);
+      --accent: #ff4d6d;
+      --accent-2: #ff7aa2;
+      --text-light: #fff;
+      --text-dark: #1b1222;
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:var(--text-dark);
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.06), transparent),
+                  linear-gradient(135deg,var(--bg1),var(--bg2));
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
     }
 
-    .container {
-      text-align: center;
-      position: relative;
+    /* layout */
+    .page{display:flex;flex-direction:column;align-items:center;min-height:100vh}
+
+    /* hero */
+    .hero{
+      width:100%;
+      min-height:78vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      padding:4rem 1rem;
+      overflow:hidden;
     }
 
-    h1 {
-      color: #e6005c;
+    .nav{position:absolute;top:1rem;left:1rem;display:flex;align-items:center;gap:.5rem}
+    .logo{font-size:1.25rem;background:rgba(255,255,255,0.14);padding:.45rem .85rem;border-radius:999px;color:var(--text-light);backdrop-filter:blur(4px);}
+
+    /* glass card */
+    .card{
+      width:min(920px,96%);
+      padding:2.2rem;
+      border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      border:1px solid var(--glass-border);
+      box-shadow: 0 10px 40px rgba(9,10,12,0.12);
+      backdrop-filter: blur(8px) saturate(120%);
+      text-align:center;
+      position:relative;
+      z-index:8;
+      color:var(--text-light);
     }
 
-    button {
-      padding: 12px 25px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin: 20px;
+    .title{
+      font-family:"Playfair Display", serif;
+      font-weight:700;
+      margin:0 0 .6rem;
+      font-size:clamp(2rem, 4vw, 3.4rem);
+      color: #fff;
+      text-shadow: 0 6px 26px rgba(0,0,0,0.35);
+      letter-spacing:0.4px;
     }
 
-    #yes {
-      background-color: #28a745;
-      color: white;
+    .subtitle{
+      margin:0 0 1.25rem;
+      color: #fff;
+      opacity:.95;
+      font-size:1.05rem;
+      max-width:78%;
+      margin-left:auto;margin-right:auto;
     }
 
-    #no {
-      background-color: #dc3545;
-      color: white;
-      position: absolute;
+    /* buttons */
+    .actions{display:flex;gap:1rem;justify-content:center;margin-top:.9rem;flex-wrap:wrap}
+    .btn{
+      padding:.72rem 1.2rem;
+      border-radius:12px;
+      font-weight:700;
+      border:0;
+      cursor:pointer;
+      transition:transform .14s ease, box-shadow .14s ease, opacity .14s ease;
+      font-family:inherit;
+      letter-spacing:.2px;
     }
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{
+      background: linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#fff;
+      box-shadow: 0 12px 34px rgba(255,77,109,0.22);
+    }
+    .btn.ghost{
+      background: transparent;
+      color:#fff;
+      border:1px solid rgba(255,255,255,0.18);
+    }
+
+    .hint{margin-top:1rem;color:rgba(255,255,255,0.9);font-size:.92rem}
+
+    /* decorative layers */
+    .bg-blobs{
+      position:absolute;inset:-10% -10% auto auto; z-index:1; filter: blur(40px); opacity:.9;
+    }
+    .bg-blobs svg{ width:900px; height:900px; display:block;}
+
+    /* details section */
+    .details{padding:3rem 1rem 6rem; z-index:4}
+    .details-inner{max-width:720px;margin:0 auto;background:rgba(255,255,255,0.04);padding:1.6rem;border-radius:12px;border:1px solid rgba(255,255,255,0.05);color:#fff}
+    .details h2{font-family:"Playfair Display", serif;margin-top:0;color:#fff}
+
+    /* modal */
+    .modal{
+      position:fixed;inset:0;display:grid;place-items:center;background:rgba(6,6,8,0.45);
+      opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:40;
+    }
+    .modal[aria-hidden="false"]{opacity:1;pointer-events:auto}
+    .modal-content{
+      width: min(560px,94%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.96));
+      padding:1.4rem;border-radius:14px;box-shadow:0 30px 80px rgba(10,10,15,0.35);position:relative;
+    }
+    .modal .close{position:absolute;right:10px;top:10px;background:transparent;border:0;font-size:1.4rem;cursor:pointer}
+    .modal h3{margin:0 0 .5rem;font-family:"Playfair Display",serif}
+    .modal-text{margin:0 0 1rem;color:#333}
+    .modal-actions{display:flex;gap:.7rem;justify-content:flex-end}
+
+    /* floating hearts */
+    .floating-heart{
+      position:fixed;
+      bottom:-20px;
+      pointer-events:none;
+      z-index:6;
+      will-change: transform, opacity;
+      filter:drop-shadow(0 8px 18px rgba(0,0,0,0.18));
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg) scale(0.9); opacity:1; }
+      20% { transform: translateY(-15vh) rotate(20deg) scale(1.05); opacity:1; }
+      100% { transform: translateY(-120vh) rotate(420deg) scale(0.85); opacity:0; }
+    }
+
+    /* small confetti pieces */
+    .confetti{
+      position:fixed;
+      bottom:0;
+      width:10px;height:14px;
+      pointer-events:none;
+      z-index:60;
+      transform-origin:center;
+      will-change: transform, opacity;
+    }
+
+    /* responsive */
+    @media (max-width:520px){
+      .card{padding:1.3rem}
+      .title{font-size:1.7rem}
+      .subtitle{max-width:92%}
+    }
+
+    /* accessible focus visible */
+    .btn:focus { outline:3px solid rgba(255,255,255,0.12); outline-offset:3px; }
   </style>
 </head>
 <body>
+  <main class="page">
+    <div class="hero" role="banner">
+      <header class="nav" aria-hidden="true">
+        <div class="logo" title="Made with love">💌</div>
+      </header>
 
-  <div class="container">
-    <h1>Will you be my Valentine? 💕</h1>
+      <!-- decorative blurred blobs -->
+      <div class="bg-blobs" aria-hidden="true">
+        <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#fff1"/><stop offset="1" stop-color="#fff0"/></linearGradient>
+          </defs>
+          <ellipse cx="220" cy="180" rx="280" ry="140" fill="url(#g1)" style="fill:rgba(255,255,255,0.06)"></ellipse>
+          <ellipse cx="680" cy="420" rx="260" ry="160" fill="url(#g1)" style="fill:rgba(255,255,255,0.04)"></ellipse>
+        </svg>
+      </div>
 
-    <button id="yes" onclick="yesClicked()">Yes</button>
-    <button id="no" onmouseover="moveNo()">No</button>
+      <section class="card" aria-labelledby="hero-title">
+        <h1 id="hero-title" class="title">Will you be my Valentine?</h1>
+        <p class="subtitle" id="lead">From the moment we met, everything felt brighter. I made this just for you — will you share forever with me?</p>
+
+        <div class="actions">
+          <button id="proposeBtn" class="btn primary" aria-haspopup="dialog" aria-controls="proposalModal">Open the surprise</button>
+          <a href="#more" class="btn ghost" style="text-decoration:none">Read our story</a>
+        </div>
+
+        <p class="hint">Tip: click the button for a little surprise ✨</p>
+      </section>
+    </div>
+
+    <section id="more" class="details" aria-labelledby="storyTitle">
+      <div class="details-inner">
+        <h2 id="storyTitle">A little story</h2>
+        <p>Write a personalised story here — how you met, a funny memory, or what you love about them. Keep it warm and sincere. Replace this paragraph with your own words.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="proposalModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modalTitle">
+    <div class="modal-content" role="document">
+      <button class="close" id="closeModal" aria-label="Close">&times;</button>
+      <h3 id="modalTitle">A question from the heart</h3>
+      <p class="modal-text">Will you share forever with me? I promise love, laughter, and endless warm coffee mornings.</p>
+      <div class="modal-actions">
+        <button id="yesBtn" class="btn primary">Yes, forever 💍</button>
+        <button id="noBtn" class="btn ghost">Let me think</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    function moveNo() {
-      const noBtn = document.getElementById("no");
+    // Single-file interactive script: modal, floating hearts and confetti
+    (function(){
+      const proposeBtn = document.getElementById('proposeBtn');
+      const modal = document.getElementById('proposalModal');
+      const closeModal = document.getElementById('closeModal');
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
 
-      const x = Math.random() * 300 - 150;
-      const y = Math.random() * 300 - 150;
+      // keep track for focus return
+      let lastFocused = null;
 
-      noBtn.style.transform = `translate(${x}px, ${y}px)`;
-    }
+      function openModal(){
+        lastFocused = document.activeElement;
+        modal.setAttribute('aria-hidden','false');
+        // move focus to close button for accessibility
+        closeModal.focus();
+        launchHearts(22);
+      }
+      function close(){
+        modal.setAttribute('aria-hidden','true');
+        // return focus
+        if(lastFocused) lastFocused.focus();
+      }
 
-    function yesClicked() {
-      document.body.innerHTML = `
-        <div style="
-          height:100vh;
-          display:flex;
-          justify-content:center;
-          align-items:center;
-          background:#ffe6eb;
-          text-align:center;
-          font-family:Arial;">
-          <h1 style="color:#e6005c;">
-            Yayy! 💖<br>
-            This is your best decision 😍<br>
-            Happy Valentine’s Day! 🌹
-          </h1>
-        </div>
-      `;
-    }
+      proposeBtn.addEventListener('click', openModal);
+      closeModal.addEventListener('click', close);
+      noBtn.addEventListener('click', close);
+
+      // close on ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+          close();
+        }
+      });
+
+      // yes: celebration
+      yesBtn.addEventListener('click', function(){
+        yesBtn.disabled = true;
+        yesBtn.textContent = '💖 Forever!';
+        launchHearts(60);
+        launchConfetti(36);
+        setTimeout(()=> {
+          // small secondary burst
+          launchHearts(28);
+          launchConfetti(22);
+        }, 800);
+        setTimeout(()=> close(), 2000);
+      });
+
+      /* FLOATING HEART CREATOR
+         creates an inline SVG heart, positions it with random left, size, duration and drift
+      */
+      function launchHearts(count = 20){
+        for (let i=0;i<count;i++){
+          createHeart();
+        }
+      }
+
+      function createHeart() {
+        const svgns = "http://www.w3.org/2000/svg";
+        const wrapper = document.createElement('div');
+        wrapper.className = 'floating-heart';
+        const size = rand(16, 46); // px
+        const left = rand(8, 92); // percent of viewport width
+        const duration = rand(3600, 7600); // ms
+        const delay = rand(0, 600); // ms
+        const drift = rand(-120, 120); // px horizontal drift
+
+        // build SVG heart
+        const svg = document.createElementNS(svgns, 'svg');
+        svg.setAttribute('viewBox','0 0 32 29');
+        svg.setAttribute('width', size);
+        svg.setAttribute('height', size);
+        svg.setAttribute('aria-hidden','true');
+
+        // gradient for each heart (randomized colors)
+        const defs = document.createElementNS(svgns,'defs');
+        const gid = 'g'+Math.floor(Math.random()*1000000);
+        const grad = document.createElementNS(svgns,'linearGradient');
+        grad.setAttribute('id', gid);
+        grad.setAttribute('x1','0%'); grad.setAttribute('x2','100%');
+        const stop1 = document.createElementNS(svgns,'stop'); stop1.setAttribute('offset','0%'); stop1.setAttribute('stop-color', randChoice(['#ff6b8a','#ff9db7','#ff4d6d','#ff7aa2','#ffd1dc']));
+        const stop2 = document.createElementNS(svgns,'stop'); stop2.setAttribute('offset','100%'); stop2.setAttribute('stop-color', randChoice(['#ff9db7','#ff6b8a','#ff7aa2','#ff4d6d','#ffc1d9']));
+        grad.appendChild(stop1); grad.appendChild(stop2);
+        defs.appendChild(grad);
+        svg.appendChild(defs);
+
+        // heart path (nice rounded heart)
+        const path = document.createElementNS(svgns,'path');
+        path.setAttribute('d','M23.6 0c-2.9 0-5.5 1.5-7.1 3.9C14.9 1.5 12.3 0 9.4 0 4.2 0 0 4.1 0 9.1c0 11 11.9 16.9 16 20 4.1-3.1 16-9 16-20C32 4.1 27.8 0 23.6 0z');
+        path.setAttribute('fill', 'url(#'+gid+')');
+        svg.appendChild(path);
+
+        wrapper.appendChild(svg);
+        document.body.appendChild(wrapper);
+
+        // set position & animation via style
+        wrapper.style.left = left + 'vw';
+        wrapper.style.width = size + 'px';
+        wrapper.style.height = size + 'px';
+        wrapper.style.animation = `floatUp ${duration}ms cubic-bezier(.2,.8,.2,1) ${delay}ms forwards`;
+        // introduce slight horizontal drift by adding CSS transform translateX in animation via JS
+        // we will animate with CSS keyframes and tweak horizontal translate using transform style at start and end
+        // To simulate drift, set initial transform and use a transition to the final translateY/rotate handled by keyframes
+
+        // Build a small inline style for translateX at start using transform and adjust via keyframe pseudo by adding CSS variable
+        const driftPx = drift;
+        wrapper.style.setProperty('--drift', driftPx+'px');
+        // Use transform origin center
+        wrapper.style.transform = `translateX(${driftPx*0.0}px)`;
+
+        // cleanup after animation ends
+        setTimeout(()=> {
+          try{ wrapper.remove(); } catch(e){}
+        }, duration + delay + 200);
+      }
+
+      /* CONFETTI - small rectangles that tumble */
+      function launchConfetti(count = 24){
+        const colors = ['#ff4d6d','#ffb3c6','#ffd1dc','#ff7aa2','#fff58f','#ffd16b'];
+        for (let i=0;i<count;i++){
+          const el = document.createElement('div');
+          el.className = 'confetti';
+          const w = rand(7,12), h = rand(9,16);
+          el.style.width = w + 'px';
+          el.style.height = h + 'px';
+          el.style.left = rand(10,90) + 'vw';
+          el.style.background = randChoice(colors);
+          el.style.borderRadius = (rand(0,40) > 28 ? '3px' : '0px');
+          document.body.appendChild(el);
+
+          const duration = rand(900,1700);
+          const rotation = rand(180,1080);
+          const horizontal = rand(-120,120);
+          el.animate([
+            { transform: `translateY(0px) rotate(0deg)`, opacity:1 },
+            { transform: `translateY(-${rand(220,420)}vh) translateX(${horizontal}px) rotate(${rotation}deg)`, opacity:0 }
+          ], {
+            duration: duration + rand(0,800),
+            easing: 'cubic-bezier(.2,.8,.2,1)',
+            iterations: 1,
+            delay: rand(0,300)
+          });
+          setTimeout(()=> {
+            try{ el.remove(); } catch(e){}
+          }, duration + 900);
+        }
+      }
+
+      // tiny utility functions
+      function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+      function randChoice(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+      // initial gentle floating effect on load
+      window.addEventListener('load', () => {
+        // few small hearts to decorate on load
+        launchHearts(12);
+      });
+
+    })();
   </script>
-
 </body>
 </html>
-
